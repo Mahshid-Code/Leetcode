@@ -1,0 +1,15 @@
+class Solution(object):
+    def twoSum(self, nums, target):
+        map=dict()
+        for num in range(len(nums)):
+            if target-nums[num] in map:
+                return [map[target-nums[num]],num]
+            else:
+                map[nums[num]]=num
+        return []
+            
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
