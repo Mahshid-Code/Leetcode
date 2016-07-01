@@ -1,0 +1,68 @@
+class Solution(object):
+    def minWindow(self, source, query):
+        if not query or not source:
+            return ""
+        M = len(query)
+        N = len(source)
+        if M>N:
+            return ""
+        # make a hash table with keys from query elements and save number of occurence of each element in the querry 
+        elements_query= dict()
+        for char in query:
+            if not elements_query.has_key(char):
+                elements_query[char] = 1
+            else:
+                elements_query[char] += 1
+
+        substring=""
+        shortest_substring=""
+        len_shortest_substring = N+1
+        start_index= 0
+        # find start index of first potential substring
+        while start_index <N and len(substring) == 0:
+            char = source [start_index]
+            if elements_query.has_key(char):
+                substring= substring + char
+                elements_query[char] -=1
+            start_index +=1
+        if len(substring) == 0 or M==1:
+            return substring
+        number_seen_element = 1
+        len_substring_so_far = 1
+        for char in source[start_index:]:
+            if number_seen_element == M and len_substring_so_far == M:
+                return substring
+            if elements_query.has_key(char):
+                if elements_query[char]>0:
+                    number_seen_element +=1
+                    elements_query[char] -=1
+                    substring=substring + char
+                    len_substring_so_far +=1
+                elif char == substring[0] and len(substring)>0:
+                    substring = substring + char
+                    substring=substring[1:]
+                    while not elements_query.has_key(substring[0]) or elements_query[substring[0]]<0:
+                        if elements_query.has_key(substring[0]):
+                            elements_query[substring[0]]+=1
+                        substring = substring[1:]
+                        len_substring_so_far -= 1
+                        
+                else:
+                    substring= substring + char
+                    len_substring_so_far +=1
+                    elements_query[char]-=1
+                if number_seen_element >= M:
+                    if len_substring_so_far < len_shortest_substring:
+                        shortest_substring = substring
+                        len_shortest_substring = len(shortest_substring)
+            else:
+                substring= substring + char
+                len_substring_so_far +=1
+        return shortest_substring    
+                
+        """
+        :type s: str
+        :type t: str
+        :rtype: str
+        """
+        
