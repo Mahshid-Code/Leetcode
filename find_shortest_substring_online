@@ -1,53 +1,53 @@
 def find_shortest_substring_online(document, query):
-best_right, best_left, query_set = initialize(document, query)
-for (right, ch) in enumerate(document):
-ch = normalize(ch)  
+	best_right, best_left, query_set = initialize(document, query)
+	for (right, ch) in enumerate(document):
+		ch = normalize(ch)  
    	 	if ch not in query_set:
-continue
+			continue
     		left, query_set = find_new_left (right, ch, query_set)
     		if left == None:
-        			continue
+			continue
 		if right-left <= best_right - best_left:
 			best_right, best_left = right, left
   	return document[best_left:best_right+1]
 
 def initialize(document, query):
-query_set = doublelist_dict(query)
-best_right, best_left = len(document) +1 , 0  
+	query_set = doublelist_dict(query)
+	best_right, best_left = len(document) +1 , 0  
     	return best_right, best_left, query_set
 
 def doublelist_dict(query):
-query_set = dict()
+	query_set = dict()
     	for ch in query:
 		ch = normalize(ch)
-        		if not query_set.has_key(ch):
+		if not query_set.has_key(ch):
             		query_set[ch]= [None,None, None] # previous ch, next ch, seen_index
 	query_set['words_to_cover'] = len(query) #save number of seen words
 	query_set['last_ch'] = None #save what is the last seen word(char) so far
     	query_set['first_ch'] = None #save what is the first seen word so far
-return query_set    
+	return query_set    
 
 def find_new_left(right,ch,query_set):
 	left = None
 	if query_set[ch][2] == None: # word seen for the first time
-query_set = new_char_update(right, ch,query_set)
-else:
-query_set = seen_char_update(right, ch, query_set)
-if query_set['words_to_cover'] == 0:
-first_ch = query_set['first_ch']
-left = query_set[first_ch][2] #index first seen char
+		query_set = new_char_update(right, ch,query_set)
+	else:
+		query_set = seen_char_update(right, ch, query_set)
+	if query_set['words_to_cover'] == 0:
+		first_ch = query_set['first_ch']
+		left = query_set[first_ch][2] #index first seen char
     	return left, query_set
 
 def new_char_update(right, ch, query_set):
-previous = query_set['last_ch']
-query_set['words_to_cover']  -= 1
-            query_set[ch] = [previous,None, right]
-if previous != None:
-query_set[previous][1] = ch
-query_set['last_ch'] = ch
+	previous = query_set['last_ch']
+	query_set['words_to_cover']  -= 1
+	query_set[ch] = [previous,None, right]
+	if previous != None:
+		query_set[previous][1] = ch
+		query_set['last_ch'] = ch
 	else:
 		query_set['first_ch'] = ch
-return query_set 
+	return query_set 
 
 def seen_char_update(right, ch, query_set):
 	if query_set[ch][1] == None: # the seen ch is the same as last seen ch
@@ -56,12 +56,16 @@ def seen_char_update(right, ch, query_set):
 	if query_set[ch][0] == None: # the seen ch is the first seen ch
 		query_set['first_ch'] = query_set[ch][1]
 		query_set[query_set[ch][1]][0]=None
-else:
-previous, next = query_set[ch][0], query_set[ch][1]
+	else:
+		previous, next = query_set[ch][0], query_set[ch][1]
 		query_set[previous][1], query_set[next][0] = next, previous
- # update last seen ch to current ch
-last = query_set['last_ch']
-query_set[last][1] = ch	
-query_set[ch] = [last, None, right]
-query_set['last_ch'] = ch
-return query_set
+	# update last seen ch to current ch
+	last = query_set['last_ch']
+	query_set[last][1] = ch	
+	query_set[ch] = [last, None, right]
+	query_set['last_ch'] = ch
+	return query_set
+
+
+
+
